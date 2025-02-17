@@ -167,9 +167,9 @@ export class Form {
 
             const loginResult: LoginResponseType | boolean = await AuthService.logIn(dataLogin);
             if (loginResult) {
-                AuthUtils.setAuthInfo((loginResult as LoginResponseType).tokens.accessToken, (loginResult as LoginResponseType).tokens.refreshToken, {
-                    id: (loginResult as LoginResponseType).user.id,
-                    name: (loginResult as LoginResponseType).user.name + ' ' + (loginResult as LoginResponseType).user.lastName
+                AuthUtils.setAuthInfo((loginResult as LoginResponseType).response.tokens.accessToken, (loginResult as LoginResponseType).response.tokens.refreshToken, {
+                    id: (loginResult as LoginResponseType).response.user.id,
+                    name: (loginResult as LoginResponseType).response.user.name + ' ' + (loginResult as LoginResponseType).response.user.lastName
                 });
 
                 this.openNewRoute('/');

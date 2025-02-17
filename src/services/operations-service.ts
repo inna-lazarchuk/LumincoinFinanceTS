@@ -1,8 +1,12 @@
 import {HttpUtils} from "../utils/http-utils";
 import {
-    IncomeExpensesAddBodyType, OperationResponseType, OperationReturnObjectType,
+    IncomeExpensesAddBodyType,
+    OperationReturnObjectType,
     OperationsResponseBodyType,
-    OperationsServiceType, OperationsReturnObjectType
+    OperationsReturnObjectType,
+    OperationsResultResponseType,
+    OperationResultResponseType,
+    OperationType
 } from "../types/operationsService.type";
 import {CommonErrorType} from "../types/commonError.type";
 
@@ -14,15 +18,15 @@ export class OperationsService {
             allOperations: null
         }
 
-        const result: OperationsServiceType | CommonErrorType = await HttpUtils.request('/operations?period=' + period);
+        const result: OperationsResultResponseType | CommonErrorType = await HttpUtils.request('/operations?period=' + period);
         console.log(result);
 
-        if ((result as CommonErrorType).error) {
+        if ((result as CommonErrorType).error || (result as OperationsResultResponseType).error) {
             returnObject.error = 'Возникла ошибка при запросе доходов и расходов. Обратитесь в поддержку';
             return returnObject;
         }
 
-            returnObject.allOperations = (result as OperationsServiceType[]);
+            returnObject.allOperations = (result as OperationsResultResponseType).response;
             return returnObject;
     }
 
@@ -35,14 +39,14 @@ export class OperationsService {
         }
         this.body = body;
 
-        const result: OperationsServiceType | CommonErrorType = await HttpUtils.request('/operations?period=' + period + '&dateFrom=' + this.body.dateFrom + '&dateTo=' + this.body.dateTo);
+        const result: OperationsResultResponseType | CommonErrorType = await HttpUtils.request('/operations?period=' + period + '&dateFrom=' + this.body.dateFrom + '&dateTo=' + this.body.dateTo);
 
-        if ((result as CommonErrorType).error) {
+        if ((result as CommonErrorType).error || (result as OperationsResultResponseType).error) {
             returnObject.error = 'Возникла ошибка при запросе доходов и расходов. Обратитесь в поддержку';
             return returnObject;
         }
 
-        returnObject.allOperations = (result as OperationsServiceType[]);
+        returnObject.allOperations = (result as OperationsResultResponseType).response;
         return returnObject;
     }
 
@@ -51,14 +55,14 @@ export class OperationsService {
             error: false,
             operation: null
         }
-        const result: OperationResponseType | CommonErrorType = await HttpUtils.request('/operations/' + id);
+        const result: OperationResultResponseType | CommonErrorType = await HttpUtils.request('/operations/' + id);
 
-        if ((result as CommonErrorType).error || !result) {
+        if ((result as CommonErrorType).error || (result as OperationResultResponseType).error) {
             returnObject.error = 'Возникла ошибка при запросе операции. Обратитесь в поддержку';
             return returnObject;
         }
 
-        returnObject.operation = result as OperationResponseType;
+        returnObject.operation = (result as OperationResultResponseType).response;
         return returnObject;
     }
 
@@ -68,19 +72,21 @@ export class OperationsService {
             operation: null
         }
 
-        const result: OperationResponseType | CommonErrorType = await HttpUtils.request('/operations', "POST", true, body);
+        const result: OperationResultResponseType | CommonErrorType = await HttpUtils.request('/operations', "POST", true, body);
 
-        if ((result as CommonErrorType).error || !result) {
+        if ((result as CommonErrorType).error || (result as OperationResultResponseType).error) {
             (returnObject).error = 'Возникла ошибка при добавлении категории дохода. Обратитесь в поддержку';
             return returnObject;
         }
 
-            (returnObject.operation as OperationResponseType).id = (result as OperationResponseType).id;
-            (returnObject.operation as OperationResponseType).type = (result as OperationResponseType).type;
-            (returnObject.operation as OperationResponseType).amount = (result as OperationResponseType).amount;
-            (returnObject.operation as OperationResponseType).date = (result as OperationResponseType).date;
-            (returnObject.operation as OperationResponseType).comment = (result as OperationResponseType).comment;
-            (returnObject.operation as OperationResponseType).category = (result as OperationResponseType).category;
+        if(returnObject.operation){
+            returnObject.operation.id = (result as OperationResultResponseType).response.id;
+            returnObject.operation.type = (result as OperationResultResponseType).response.type;
+            returnObject.operation.amount = (result as OperationResultResponseType).response.amount;
+            returnObject.operation.date = (result as OperationResultResponseType).response.date;
+            returnObject.operation.comment = (result as OperationResultResponseType).response.comment;
+            returnObject.operation.category = (result as OperationResultResponseType).response.category;
+        }
 
         return returnObject;
     }
@@ -91,8 +97,8 @@ export class OperationsService {
             operation: null
         };
 
-        const result: OperationResponseType | CommonErrorType  = await HttpUtils.request('/operations/' + id, "PUT", true, data);
-        if ((result as CommonErrorType).error || !result) {
+        const result: OperationResultResponseType | CommonErrorType  = await HttpUtils.request('/operations/' + id, "PUT", true, data);
+        if ((result as CommonErrorType).error || (result as OperationResultResponseType).error) {
             returnObject.error = 'Возникла ошибка при редактировании дохода или расхода. Обратитесь в поддержку';
 
         }

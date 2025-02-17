@@ -1,17 +1,19 @@
-export type OperationsServiceType =
+export type OperationsResultResponseType =
     {
-        id: number,
-        type: string,
-        amount: number,
-        date: string,
-        comment: string,
-        category: string
+        error: boolean,
+        response: {
+            id: number,
+            type: string,
+            amount: number,
+            date: string,
+            comment: string,
+            category: string
+        }[]
     }
-
 
 export type OperationsReturnObjectType = {
     error: boolean | string,
-    allOperations: OperationsServiceType[] | null
+    allOperations: OperationType[] | null
 }
 
 export type OperationsResponseBodyType = {
@@ -19,7 +21,12 @@ export type OperationsResponseBodyType = {
     dateTo: string
 }
 
-export type OperationResponseType = {
+export type OperationResultResponseType = {
+    error: boolean,
+    response: OperationType
+}
+
+export type OperationType = {
     id: number,
     type: string,
     amount: number,
@@ -30,7 +37,7 @@ export type OperationResponseType = {
 
 export type OperationReturnObjectType = {
     error: boolean | string,
-    operation: null | OperationResponseType
+    operation: null | OperationType
 }
 
 export type IncomeExpensesAddBodyType = {

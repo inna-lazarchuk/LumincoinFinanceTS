@@ -22,14 +22,18 @@ export class AuthUtils {
         localStorage.removeItem(this.userInfoTokenKey);
     }
 
-    public static getAuthInfo(key: string| null = null): string | AuthInfoType | null {
+    public static getAuthInfo(key: string | null = null): string | AuthInfoType {
         if (key && [this.accessTokenKey, this.refreshTokenKey, this.userInfoTokenKey].includes(key)) {
             return localStorage.getItem(key) as string;
         } else {
+            const accessToken = localStorage.getItem(this.accessTokenKey);
+            const refreshToken = localStorage.getItem(this.refreshTokenKey);
+            const userInfo = localStorage.getItem(this.userInfoTokenKey);
+
             return {
-                [this.accessTokenKey]: localStorage.getItem(this.accessTokenKey),
-                [this.refreshTokenKey]: localStorage.getItem(this.refreshTokenKey),
-                [this.userInfoTokenKey]: localStorage.getItem(this.userInfoTokenKey),
+                [this.accessTokenKey]: accessToken,
+                [this.refreshTokenKey]: refreshToken,
+                [this.userInfoTokenKey]: userInfo ? JSON.parse(userInfo) : null,
             } as AuthInfoType;
         }
     }

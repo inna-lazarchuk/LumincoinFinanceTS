@@ -7,7 +7,6 @@ export class ExpenseCreate {
     private buttonCreateElement: HTMLElement | null;
     constructor(openNewRoute: (url: string) => Promise<void>) {
         this.openNewRoute = openNewRoute;
-
         this.buttonCancelElement = document.getElementById('expense-cancel');
         this.buttonCreateElement = document.getElementById('expense-create');
         if(this.buttonCreateElement){

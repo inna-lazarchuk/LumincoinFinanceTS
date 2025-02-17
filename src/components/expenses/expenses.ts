@@ -1,8 +1,9 @@
 import {ExpensesService} from "../../services/expenses-service";
-import {ExpenseResponseType, ExpenseReturnObjectType} from "../../types/expensesService.type";
+import {ExpenseCategoryType, ExpenseReturnObjectType} from "../../types/expensesService.type";
 
 export class Expenses {
     private openNewRoute: (url: string) => Promise<void>;
+
     constructor(openNewRoute: (url: string) => Promise<void>) {
         this.openNewRoute = openNewRoute;
         this.getAllCategoriesExpenses().then();
@@ -16,46 +17,53 @@ export class Expenses {
             return;
         }
         console.log(response);
-        this.showCategories(response.category as ExpenseResponseType[]);
+        this.showCategories(response.category as ExpenseCategoryType[]);
 
     }
 
-    private showCategories(categories: ExpenseResponseType[]): void {
-        const categoriesItemsElement: HTMLElement | null= document.getElementById('categoriesItems');
+    private showCategories(categories: ExpenseCategoryType[]): void {
+        const categoriesItemsElement: HTMLElement | null = document.getElementById('categoriesItems');
 
-        categories.forEach((category: ExpenseResponseType) => {
+        categories.forEach((category: ExpenseCategoryType) => {
             const categoryElement: HTMLElement = document.createElement('div');
-            categoryElement.classList.add('page-item');
-            categoryElement.setAttribute('id', category.id.toString());
-            const titleElement: HTMLElement = document.createElement('h3');
-            titleElement.innerText = category.title;
-            const actionsElement: HTMLElement = document.createElement('div');
-            actionsElement.classList.add('page-item-actions', 'd-flex');
-            const buttonEditElement: HTMLElement = document.createElement('button');
-            buttonEditElement.setAttribute('type', 'button');
-            buttonEditElement.classList.add('btn', 'btn-primary', 'button-edit');
-            buttonEditElement.innerText = 'Редактировать';
-            buttonEditElement.addEventListener('click', () => {
-                localStorage.setItem('categoryId', category.id.toString());
-                localStorage.setItem('placeholder', category.title);
-                this.openNewRoute('/expense-edit')}
-            );
+            if (category.id && category.title) {
+                categoryElement.classList.add('page-item');
+                categoryElement.setAttribute('id', category.id.toString());
+                const titleElement: HTMLElement = document.createElement('h3');
+                titleElement.innerText = category.title;
+                const actionsElement: HTMLElement = document.createElement('div');
+                actionsElement.classList.add('page-item-actions', 'd-flex');
+                const buttonEditElement: HTMLElement = document.createElement('button');
+                buttonEditElement.setAttribute('type', 'button');
+                buttonEditElement.classList.add('btn', 'btn-primary', 'button-edit');
+                buttonEditElement.innerText = 'Редактировать';
+                buttonEditElement.addEventListener('click', () => {
+                        if (category.id && category.title) {
+                            localStorage.setItem('categoryId', category.id.toString());
+                            localStorage.setItem('placeholder', category.title);
+                            this.openNewRoute('/expense-edit')
+                        }
+                    }
+                );
 
-            const buttonDeleteElement: HTMLElement = document.createElement('button');
-            buttonDeleteElement.setAttribute('type', 'button');
-            buttonDeleteElement.classList.add('btn', 'btn-danger', 'button-delete');
-            buttonDeleteElement.innerText = 'Удалить';
-            buttonDeleteElement.addEventListener('click', () => {
-                localStorage.setItem('categoryId', category.id.toString());
-                this.openNewRoute('/expense-delete')
-            });
+                const buttonDeleteElement: HTMLElement = document.createElement('button');
+                buttonDeleteElement.setAttribute('type', 'button');
+                buttonDeleteElement.classList.add('btn', 'btn-danger', 'button-delete');
+                buttonDeleteElement.innerText = 'Удалить';
+                buttonDeleteElement.addEventListener('click', () => {
+                    if (category.id) {
+                        localStorage.setItem('categoryId', category.id.toString());
+                        this.openNewRoute('/expense-delete')
+                    }
+                });
 
-            actionsElement.appendChild(buttonEditElement);
-            actionsElement.appendChild(buttonDeleteElement);
-            categoryElement.appendChild(titleElement);
-            categoryElement.appendChild(actionsElement);
-            if(categoriesItemsElement){
-                categoriesItemsElement.appendChild(categoryElement);
+                actionsElement.appendChild(buttonEditElement);
+                actionsElement.appendChild(buttonDeleteElement);
+                categoryElement.appendChild(titleElement);
+                categoryElement.appendChild(actionsElement);
+                if (categoriesItemsElement) {
+                    categoriesItemsElement.appendChild(categoryElement);
+                }
             }
         })
 
@@ -65,7 +73,7 @@ export class Expenses {
         pageAddElement.classList.add('page-item-add');
         pageAddElement.innerText = '+';
         categoryLastElement.appendChild(pageAddElement);
-        if(categoriesItemsElement){
+        if (categoriesItemsElement) {
             categoriesItemsElement.appendChild(categoryLastElement);
         }
         categoryLastElement.addEventListener('click', () => this.openNewRoute('/expense-create'));

@@ -1,5 +1,5 @@
 import {ExpensesService} from "../../services/expenses-service";
-import {ExpenseResponseType, ExpenseReturnObjectType} from "../../types/expensesService.type";
+import {ExpenseCategoryType, ExpenseReturnObjectType} from "../../types/expensesService.type";
 
 export class ExpenseEdit {
     private openNewRoute: (url: string) => Promise<void>;
@@ -17,14 +17,8 @@ export class ExpenseEdit {
             this.getCategory(this.id).then();
         }
 
-        this.buttonSaveElement = document.getElementById('edit-save');
-        this.buttonCancelElement = document.getElementById('edit-cancel');
-        if (this.buttonSaveElement) {
-            this.buttonSaveElement.addEventListener('click', this.editCategory.bind(this));
-        }
-        if (this.buttonCancelElement) {
-            this.buttonCancelElement.addEventListener('click', () => this.openNewRoute('/expenses'));
-        }
+        this.buttonSaveElement = null;
+        this.buttonCancelElement = null;
     }
     private async getCategory(id: number): Promise<void> {
         let result: ExpenseReturnObjectType = await ExpensesService.getCategory(id);
@@ -37,7 +31,7 @@ export class ExpenseEdit {
         const inputElement: HTMLInputElement = document.createElement('input');
         inputElement.setAttribute('type','text');
         inputElement.setAttribute('id','nameCategoryIncomeEdit');
-        inputElement.setAttribute('value',(result.category as ExpenseResponseType).title);
+        inputElement.setAttribute('value',(result.category as ExpenseCategoryType).title as string);
         inputElement.classList.add('form-control');
 
         const actionsElement: HTMLElement = document.createElement('div');
@@ -59,6 +53,15 @@ export class ExpenseEdit {
         actionsElement.appendChild(buttonCancelElement);
         createBlock.appendChild(inputElement);
         createBlock.appendChild(actionsElement);
+
+        this.buttonSaveElement = document.getElementById('edit-save');
+        this.buttonCancelElement = document.getElementById('edit-cancel');
+        if (this.buttonSaveElement) {
+            this.buttonSaveElement.addEventListener('click', this.editCategory.bind(this));
+        }
+        if (this.buttonCancelElement) {
+            this.buttonCancelElement.addEventListener('click', () => this.openNewRoute('/expenses'));
+        }
     }
 
     async editCategory(e: Event): Promise<void>  {

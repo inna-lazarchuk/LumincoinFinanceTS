@@ -1,5 +1,5 @@
 import {IncomeService} from "../../services/income-service";
-import {IncomeResponseType, IncomeReturnObjectType} from "../../types/incomeService.type";
+import {IncomeCategoryType, IncomeReturnObjectType} from "../../types/incomeService.type";
 
 export class Income {
     private openNewRoute: (url: string) => Promise<void>;
@@ -16,46 +16,53 @@ export class Income {
             return;
         }
         console.log(response);
-        this.showCategories(response.category as IncomeResponseType[]);
+        this.showCategories(response.category as IncomeCategoryType[]);
     }
 
-    private showCategories(categories: IncomeResponseType[]): void {
+    private showCategories(categories: IncomeCategoryType[]): void {
         const categoriesItemsElement: HTMLElement | null = document.getElementById('categoriesItems');
 
-        categories.forEach((category: IncomeResponseType) => {
-            const categoryElement: HTMLElement = document.createElement('div');
-            categoryElement.classList.add('page-item');
-            categoryElement.setAttribute('id', category.id.toString());
-            const titleElement: HTMLElement = document.createElement('h3');
-            titleElement.innerText = category.title;
-            const actionsElement: HTMLElement = document.createElement('div');
-            actionsElement.classList.add('page-item-actions', 'd-flex');
-            const buttonEditElement = document.createElement('button');
-            buttonEditElement.setAttribute('type', 'button');
-            buttonEditElement.classList.add('btn', 'btn-primary', 'button-edit');
-            buttonEditElement.innerText = 'Редактировать';
-            buttonEditElement.addEventListener('click', () => {
-                localStorage.setItem('categoryId', category.id.toString());
-                localStorage.setItem('placeholder', category.title);
-                this.openNewRoute('/income-edit')}
-            );
+        categories.forEach((category: IncomeCategoryType) => {
+            if(category.id && category.title){
+                const categoryElement: HTMLElement = document.createElement('div');
+                categoryElement.classList.add('page-item');
+                categoryElement.setAttribute('id', category.id.toString());
+                const titleElement: HTMLElement = document.createElement('h3');
+                titleElement.innerText = category.title;
+                const actionsElement: HTMLElement = document.createElement('div');
+                actionsElement.classList.add('page-item-actions', 'd-flex');
+                const buttonEditElement = document.createElement('button');
+                buttonEditElement.setAttribute('type', 'button');
+                buttonEditElement.classList.add('btn', 'btn-primary', 'button-edit');
+                buttonEditElement.innerText = 'Редактировать';
+                buttonEditElement.addEventListener('click', () => {
+                    if(category.id && category.title){
+                        localStorage.setItem('categoryId', category.id.toString());
+                        localStorage.setItem('placeholder', category.title);
+                        this.openNewRoute('/income-edit')}
+                    }
+                );
 
-            const buttonDeleteElement: HTMLElement = document.createElement('button');
-            buttonDeleteElement.setAttribute('type', 'button');
-            buttonDeleteElement.classList.add('btn', 'btn-danger', 'button-delete');
-            buttonDeleteElement.innerText = 'Удалить';
-            buttonDeleteElement.addEventListener('click', () => {
-                localStorage.setItem('categoryId', category.id.toString());
-                this.openNewRoute('/income-delete')
-            });
+                const buttonDeleteElement: HTMLElement = document.createElement('button');
+                buttonDeleteElement.setAttribute('type', 'button');
+                buttonDeleteElement.classList.add('btn', 'btn-danger', 'button-delete');
+                buttonDeleteElement.innerText = 'Удалить';
+                buttonDeleteElement.addEventListener('click', () => {
+                    if(category.id) {
+                        localStorage.setItem('categoryId', category.id.toString());
+                        this.openNewRoute('/income-delete');
+                    }
+                });
 
-            actionsElement.appendChild(buttonEditElement);
-            actionsElement.appendChild(buttonDeleteElement);
-            categoryElement.appendChild(titleElement);
-            categoryElement.appendChild(actionsElement);
-            if(categoriesItemsElement){
-                categoriesItemsElement.appendChild(categoryElement);
+                actionsElement.appendChild(buttonEditElement);
+                actionsElement.appendChild(buttonDeleteElement);
+                categoryElement.appendChild(titleElement);
+                categoryElement.appendChild(actionsElement);
+                if(categoriesItemsElement){
+                    categoriesItemsElement.appendChild(categoryElement);
+                }
             }
+
         })
 
         const categoryLastElement: HTMLElement = document.createElement('div');

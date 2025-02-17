@@ -16,14 +16,17 @@ export type LoginDataType = {
 }
 
 export type LoginResponseType = {
-    tokens: {
-        accessToken: string,
-        refreshToken: string
-    },
-    user: {
-        name: string,
-        lastName: string,
-        id: number
+    error: boolean,
+    response: {
+        tokens: {
+            accessToken: string,
+            refreshToken: string
+        },
+        user: {
+            name: string,
+            lastName: string,
+            id: number
+        }
     }
 }
 

@@ -2,8 +2,10 @@ import {OperationsService} from "../../services/operations-service";
 import {PeriodForButtonEnum} from "../../types/periodForButton.enum";
 import {
     OperationsResponseBodyType,
-    OperationsReturnObjectType, OperationsServiceType
+    OperationsReturnObjectType, OperationType
 } from "../../types/operationsService.type";
+import _default from "chart.js/dist/plugins/plugin.tooltip";
+import numbers = _default.defaults.animations.numbers;
 
 export class IncomeExpenses {
     private openNewRoute: (url: string) => Promise<void>;
@@ -107,7 +109,7 @@ export class IncomeExpenses {
             return this.openNewRoute('/')
         }
 
-        if ((result.allOperations as OperationsServiceType[]).length === 0) {
+        if ((result.allOperations as OperationType[]).length === 0) {
             console.log('Нет операций в выбранном периоде');
             if(this.recordsElement){
                 this.recordsElement.innerHTML = '';
@@ -115,7 +117,7 @@ export class IncomeExpenses {
             return;
         }
         console.log(result);
-        await this.createTableIncomeExpenses(result.allOperations as OperationsServiceType[]);
+        await this.createTableIncomeExpenses(result.allOperations as OperationType[]);
 
     }
 
@@ -134,10 +136,10 @@ export class IncomeExpenses {
             return;
         }
         console.log(result);
-        await this.createTableIncomeExpenses(result.allOperations as OperationsServiceType[]);
+        await this.createTableIncomeExpenses(result.allOperations as OperationType[]);
     }
 
-    private async createTableIncomeExpenses(operations: OperationsServiceType[]): Promise<void> {
+    private async createTableIncomeExpenses(operations: OperationType[]): Promise<void> {
         const that: IncomeExpenses = this;
 
         if(that.recordsElement){
@@ -161,9 +163,7 @@ export class IncomeExpenses {
             }
 
             trElement.insertCell().innerText = operations[i].category.toLowerCase();
-            let amountElement: string = trElement.insertCell().innerText
-            let parseAmountElement: number = parseInt(amountElement);
-            parseAmountElement = operations[i].amount;
+            trElement.insertCell().innerText = operations[i].amount.toString();
             trElement.insertCell().innerText = operations[i].date;
             trElement.insertCell().innerText = operations[i].comment.toLowerCase();
             trElement.insertCell().innerHTML = '<svg class="deleteIcon" style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">\n' +

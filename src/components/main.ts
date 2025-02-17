@@ -1,10 +1,8 @@
 import {Chart} from "chart.js/auto";
 import {OperationsService} from "../services/operations-service";
 import {
-    OperationResponseType,
     OperationsResponseBodyType,
-    OperationsReturnObjectType,
-    OperationsServiceType
+    OperationsReturnObjectType, OperationType,
 } from "../types/operationsService.type";
 import {DataForDiagramsType} from "../types/main.type";
 import {PeriodForButtonEnum} from "../types/periodForButton.enum";
@@ -20,7 +18,7 @@ export class Main {
     private buttonInterval: HTMLElement | null;
     private dateFrom: HTMLInputElement;
     private dateTo: HTMLInputElement;
-    private allOperations: OperationsServiceType[] | null;
+    private allOperations: OperationType[] | null;
     private dataIncome: {};
     private dataExpenses: {};
     private labelsIncome: [] | string[] | null;
@@ -149,10 +147,13 @@ export class Main {
             console.log('Нет операций в выбранном периоде');
             return;
         }
-        this.allOperations = result.allOperations;
+        if(result.allOperations){
+            this.allOperations = result.allOperations;
+        }
+
 
         if (this.allOperations) {
-            this.allOperations.forEach((operation: OperationResponseType) => {
+            this.allOperations.forEach((operation: OperationType) => {
                 if (operation.type === 'income') {
                     if ((this.income as DataForDiagramsType[] | []).length === 0) {
                         (this.income as DataForDiagramsType[]).push({
@@ -199,8 +200,8 @@ export class Main {
         })
 
         this.expenses.forEach((expense: DataForDiagramsType) => {
-            (this.labelsIncome as string[]).push(expense.category);
-            (this.amountsIncome as number[]).push(expense.amount);
+            (this.labelsExpenses as string[]).push(expense.category);
+            (this.amountsExpenses as number[]).push(expense.amount);
         })
         this.constructorDiagrams();
     }
@@ -232,7 +233,7 @@ export class Main {
         this.allOperations = result.allOperations;
 
         if (this.allOperations) {
-            this.allOperations.forEach((operation: OperationResponseType) => {
+            this.allOperations.forEach((operation: OperationType) => {
                 if (operation.type === 'income') {
                     if ((this.income as DataForDiagramsType[] | []).length === 0) {
                         (this.income as DataForDiagramsType[]).push({

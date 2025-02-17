@@ -1,25 +1,18 @@
 import {IncomeService} from "../../services/income-service";
-import {IncomeResponseType, IncomeReturnObjectType} from "../../types/incomeService.type";
+import {IncomeCategoryType, IncomeReturnObjectType} from "../../types/incomeService.type";
 
 export class IncomeEdit {
     private openNewRoute: (url: string) => Promise<void>;
     readonly id: number;
-    readonly buttonCancelElement: HTMLElement | null;
-    readonly buttonEditElement: HTMLElement | null;
+    private buttonCancelElement: HTMLElement | null;
+    private buttonEditElement: HTMLElement | null;
 
     constructor(openNewRoute: (url: string) => Promise<void>) {
         this.openNewRoute = openNewRoute;
         this.id = parseInt(localStorage.getItem('categoryId') as string);
         this.getCategory(this.id).then();
-
-        this.buttonCancelElement = document.getElementById('edit-cancel')
-        this.buttonEditElement = document.getElementById('edit-save')
-        if (this.buttonEditElement) {
-            this.buttonEditElement.addEventListener('click', this.editCategory.bind(this));
-        }
-        if (this.buttonCancelElement) {
-            this.buttonCancelElement.addEventListener('click', () => this.openNewRoute('/income'));
-        }
+        this.buttonCancelElement = null;
+        this.buttonEditElement = null;
     }
 
     private async getCategory(id: number): Promise<void> {
@@ -27,13 +20,12 @@ export class IncomeEdit {
         if (result.error || !result.category) {
             console.log('Ошибка запроса');
         }
-
         const createBlock: Element = document.getElementsByClassName('create-block')[0];
 
         const inputElement: HTMLInputElement = document.createElement('input');
         inputElement.setAttribute('type', 'text');
         inputElement.setAttribute('id', 'nameCategoryIncomeEdit');
-        inputElement.setAttribute('value', (result.category as IncomeResponseType).title);
+        inputElement.value = (result.category as IncomeCategoryType).title as string;
         inputElement.classList.add('form-control');
 
         const actionsElement: HTMLElement = document.createElement('div');
@@ -55,6 +47,15 @@ export class IncomeEdit {
         actionsElement.appendChild(buttonCancelElement);
         createBlock.appendChild(inputElement);
         createBlock.appendChild(actionsElement);
+
+        this.buttonCancelElement = document.getElementById('edit-cancel');
+        this.buttonEditElement = document.getElementById('edit-save');
+        if (this.buttonEditElement) {
+            this.buttonEditElement.addEventListener('click', this.editCategory.bind(this));
+        }
+        if (this.buttonCancelElement) {
+            this.buttonCancelElement.addEventListener('click', () => this.openNewRoute('/income'));
+        }
     }
 
     private async editCategory(e: Event): Promise<void> {

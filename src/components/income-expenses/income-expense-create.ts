@@ -1,8 +1,8 @@
 import {IncomeService} from "../../services/income-service";
 import {OperationsService} from "../../services/operations-service";
 import {ExpensesService} from "../../services/expenses-service";
-import {IncomeResponseType, IncomeReturnObjectType} from "../../types/incomeService.type";
-import {ExpenseResponseType, ExpenseReturnObjectType} from "../../types/expensesService.type";
+import {IncomeCategoryType, IncomeReturnObjectType} from "../../types/incomeService.type";
+import {ExpenseCategoryType, ExpenseReturnObjectType} from "../../types/expensesService.type";
 import {IncomeExpensesAddBodyType, OperationReturnObjectType} from "../../types/operationsService.type";
 
 export class IncomeExpenseCreate {
@@ -35,10 +35,12 @@ export class IncomeExpenseCreate {
             if (result.error) {
                 console.log('Ошибка получения данных');
             }
-            (result.category as IncomeResponseType[]).forEach((item: IncomeResponseType) => {
+            (result.category as IncomeCategoryType[]).forEach((item: IncomeCategoryType) => {
                 const option: HTMLOptionElement = document.createElement('option');
-                option.value = item.id.toString();
-                option.innerText = item.title;
+                if(item.id && item.title){
+                    option.value = item.id.toString();
+                    option.innerText = item.title;
+                }
                 this.categorySelect.appendChild(option);
             })
         }
@@ -48,11 +50,13 @@ export class IncomeExpenseCreate {
             if (result.error) {
                 console.log('Ошибка получения данных');
             }
-            (result.category as ExpenseResponseType[]).forEach((item: ExpenseResponseType) => {
+            (result.category as ExpenseCategoryType[]).forEach((item: ExpenseCategoryType) => {
                 const option: HTMLOptionElement = document.createElement('option');
-                option.value = item.id.toString();
-                option.innerText = item.title;
-                this.categorySelect.appendChild(option);
+                if(item.id && item.title){
+                    option.value = item.id.toString();
+                    option.innerText = item.title;
+                    this.categorySelect.appendChild(option);
+                }
             })
         }
     }
@@ -79,7 +83,6 @@ export class IncomeExpenseCreate {
             if (result.error || !result) {
                 alert('Некорректные данные запроса');
             }
-            console.log(result);
             return this.openNewRoute('/income-expenses');
         }
 

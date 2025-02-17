@@ -3,11 +3,10 @@ import {IncomeService} from "../../services/income-service";
 import {ExpensesService} from "../../services/expenses-service";
 import {
     IncomeExpensesAddBodyType,
-    OperationResponseType,
-    OperationReturnObjectType,
+    OperationReturnObjectType, OperationType,
 } from "../../types/operationsService.type";
-import {IncomeResponseType, IncomeReturnObjectType} from "../../types/incomeService.type";
-import {ExpenseResponseType, ExpenseReturnObjectType} from "../../types/expensesService.type";
+import {IncomeCategoryType, IncomeReturnObjectType} from "../../types/incomeService.type";
+import {ExpenseCategoryType, ExpenseReturnObjectType} from "../../types/expensesService.type";
 
 export class IncomeExpenseEdit {
     private openNewRoute: (url: string) => Promise<void>;
@@ -17,7 +16,7 @@ export class IncomeExpenseEdit {
     private sum: HTMLInputElement;
     private date: HTMLInputElement;
     private comment: HTMLInputElement;
-    private categories: IncomeResponseType[] | ExpenseResponseType[] | null;
+    private categories: IncomeCategoryType[] | ExpenseCategoryType[] | null;
     readonly buttonSaveElement: HTMLElement | null;
     readonly buttonCancelElement: HTMLElement | null;
 
@@ -54,16 +53,16 @@ export class IncomeExpenseEdit {
         this.type.value = result.operation.type;
         this.type.setAttribute("disabled", "");
         await this.getCategories(this.type.value);
-        if (this.categories as IncomeResponseType[]) {
-            let findItemIncome: IncomeResponseType | undefined = (this.categories as IncomeResponseType[]).find((item: IncomeResponseType) => item.title === (result.operation as OperationResponseType).category);
-            if (findItemIncome) {
+        if (this.categories as IncomeCategoryType[]) {
+            let findItemIncome: IncomeCategoryType | undefined = (this.categories as IncomeCategoryType[]).find((item: IncomeCategoryType) => item.title === (result.operation as OperationType).category);
+            if (findItemIncome && findItemIncome.id) {
                 this.categorySelect.value = findItemIncome.id.toString();
             }
         }
 
-        if (this.categories as ExpenseResponseType[]) {
-            let findItemExpense: ExpenseResponseType | undefined = (this.categories as ExpenseResponseType[]).find((item: ExpenseResponseType) => item.title === (result.operation as OperationResponseType).category);
-            if (findItemExpense) {
+        if (this.categories as ExpenseCategoryType[]) {
+            let findItemExpense: ExpenseCategoryType | undefined = (this.categories as ExpenseCategoryType[]).find((item: ExpenseCategoryType) => item.title === (result.operation as OperationType).category);
+            if (findItemExpense && findItemExpense.id) {
                 this.categorySelect.value = findItemExpense.id.toString();
             }
         }
@@ -80,11 +79,14 @@ export class IncomeExpenseEdit {
             if (result.error) {
                 console.log('Ошибка получения данных');
             }
-            this.categories = result.category as IncomeResponseType[];
-            this.categories.forEach((item: IncomeResponseType) => {
+            this.categories = result.category as IncomeCategoryType[];
+            this.categories.forEach((item: IncomeCategoryType) => {
                 const option: HTMLOptionElement = document.createElement('option');
-                option.value = item.id.toString();
-                option.innerText = item.title;
+                if(item.id && item.title){
+                    option.value = item.id.toString();
+                    option.innerText = item.title;
+                }
+
                 this.categorySelect.appendChild(option);
             })
         }
@@ -94,12 +96,14 @@ export class IncomeExpenseEdit {
             if (result.error) {
                 console.log('Ошибка получения данных');
             }
-            this.categories = result.category as ExpenseResponseType[];
-            this.categories.forEach((item: ExpenseResponseType) => {
+            this.categories = result.category as ExpenseCategoryType[];
+            this.categories.forEach((item: ExpenseCategoryType) => {
                 const option: HTMLOptionElement = document.createElement('option');
-                option.value = item.id.toString();
-                option.innerText = item.title;
-                this.categorySelect.appendChild(option);
+                if(item.id && item.title) {
+                    option.value = item.id.toString();
+                    option.innerText = item.title;
+                    this.categorySelect.appendChild(option);
+                }
             })
         }
     }

@@ -30,7 +30,7 @@ export class Router {
         this.titlePageElement = document.getElementById('title');
         this.contentPageElement = document.getElementById('content');
         this.userName = null;
-        this.profileNameElement = document.getElementById('profile-name');
+        this.profileNameElement = null;
 
         this.initEvents();
 
@@ -233,16 +233,20 @@ export class Router {
                         }
                         contentBlock = document.getElementById('content-layout');
                         if (!this.userName) {
-                            let authInfo: AuthInfoUserNameType = AuthUtils.getAuthInfo(AuthUtils.userInfoTokenKey) as AuthInfoUserNameType;
-                            if (authInfo) {
-                                authInfo = JSON.parse(authInfo as string);
-                                if (authInfo.name) {
-                                    this.userName = authInfo.name;
+                            let userInfo: string | null  = AuthUtils.getAuthInfo(AuthUtils.userInfoTokenKey) as string | null;
+                            if (userInfo) {
+                                try {
+                                    const parsedUserInfo: AuthInfoUserNameType = JSON.parse(userInfo);
+                                    if(parsedUserInfo.name){
+                                    this.userName = parsedUserInfo.name}
+                                } catch (e) {
+                                    console.error('Данные о имени пользователя не получены')
                                 }
                             }
                         }
-                        if (this.profileNameElement) {
-                            this.profileNameElement.innerText = this.userName as string;
+                        this.profileNameElement = document.getElementById('profile-name');
+                        if (this.profileNameElement && this.userName) {
+                            this.profileNameElement.innerText = this.userName;
                         }
                         this.activateMenuItem(newRoute);
                         await this.getBalance();
@@ -274,19 +278,19 @@ export class Router {
         await this.activateRoute(null, null, currentRoute);
     }
 
-    private async clickHandler(e): Promise<void> {
-        let element = null;
-        if (e.target.nodeName === 'A') {
-            element = e.target;
-        } else if (e.target.parentNode.nodeName === 'A') {
-            element = e.target.parentNode;
+    private async clickHandler(e: Event | HTMLElement): Promise<void> {
+        let element: EventTarget | null = null;
+        if ((e as Event).target && ((e as Event).target as HTMLElement).nodeName  === 'A') {
+            element = (e as Event).target;
+        } else if ((e as Event).target && ((e as Event).target as HTMLElement).parentNode && ((e as Event).target as HTMLElement).parentNode.nodeName === 'A') {
+            element = ((e as Event).target as HTMLElement).parentNode;
         }
 
         if (element) {
-            e.preventDefault();
+            (e as Event).preventDefault();
 
             const currentRoute: string = window.location.pathname;
-            const url: string = element.href.replace(window.location.origin, '');
+            const url: string = (element as HTMLAnchorElement).href.replace(window.location.origin, '');
             if (!url || (currentRoute === url.replace('#', '')) || url.startsWith('javascript:void(0)')) {
                 return;
             }
