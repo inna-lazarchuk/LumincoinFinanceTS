@@ -240,7 +240,7 @@ export class Router {
                                     if(parsedUserInfo.name){
                                     this.userName = parsedUserInfo.name}
                                 } catch (e) {
-                                    console.error('Данные о имени пользователя не получены')
+                                    console.error('Данные об имени пользователя не получены')
                                 }
                             }
                         }
@@ -280,15 +280,15 @@ export class Router {
 
     private async clickHandler(e: Event | HTMLElement): Promise<void> {
         let element: EventTarget | null = null;
-        if ((e as Event).target && ((e as Event).target as HTMLElement).nodeName  === 'A') {
-            element = (e as Event).target;
-        } else if ((e as Event).target && ((e as Event).target as HTMLElement).parentNode && ((e as Event).target as HTMLElement).parentNode.nodeName === 'A') {
-            element = ((e as Event).target as HTMLElement).parentNode;
+        const target = (e as Event).target as HTMLElement;
+        if(target && target.nodeName === 'A'){
+            element = target;
+        } else  if (target && target.parentNode && target.parentNode.nodeName === 'A') {
+            element = target.parentNode as HTMLElement;
         }
 
         if (element) {
             (e as Event).preventDefault();
-
             const currentRoute: string = window.location.pathname;
             const url: string = (element as HTMLAnchorElement).href.replace(window.location.origin, '');
             if (!url || (currentRoute === url.replace('#', '')) || url.startsWith('javascript:void(0)')) {
