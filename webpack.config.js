@@ -49,11 +49,6 @@ module.exports = {
                 {from: "./src/templates", to: "templates"},
                 {from: "./src/static/images", to: "images"},
                 {from: "./src/static/fonts", to: "fonts"},
-                {from: "./src/components/bootstrap.js", to: "js"},
-                {from: "./src/components/sidebars.js", to: "js"},
-                {from: "./src/styles/bootstrap.css", to: "css"},
-                {from: "./src/styles/sidebars.css", to: "css"},
-                {from: "./src/styles/signin.css", to: "css"},
             ]
         })
     ]

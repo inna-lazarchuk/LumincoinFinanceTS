@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@cubejs-client/core": "^0.31.0",
+    "bootstrap": "^5.3.3",
     "chart.js": "^4.4.7"
   }
 }

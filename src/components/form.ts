@@ -37,14 +37,14 @@ export class Form {
                     name: 'name',
                     id: 'name',
                     element: null,
-                    regex: /^[А-Я][а-я]+\s*$/,
+                    regex: /^[А-ЯЁ][а-яё]+\s*$/,
                     valid: false,
                 },
                 {
                     name: 'lastName',
                     id: 'lastName',
                     element: null,
-                    regex: /^[А-Я][а-я]+\s*$/,
+                    regex: /^[А-ЯЁ][а-яё]+\s*$/,
                     valid: false,
                 },
                 {
